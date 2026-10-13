@@ -1,6 +1,7 @@
 package com.hcLinear.backendTest.exceptionhandling;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -77,5 +78,35 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ErrorType.NOT_FOUND_ERROR, "Resource not found, no such endpoint", List.of());
         log.warn("Resource not found, no such endpoint: {}", exception.getResourcePath());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistsException(AlreadyExistsException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.ALREADY_EXISTS_ERROR, exception.getMessage(), List.of());
+        log.warn("Resource already exists: {}", exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TeamAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleTeamAlreadyExistsException(TeamAlreadyExistsException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.ALREADY_EXISTS_ERROR, exception.getMessage(), List.of());
+        log.warn("Team already exists: {}", exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(FieldValidationException.class)
+    public ResponseEntity<ErrorResponse> handleFieldValidationException(FieldValidationException exception) {
+        List<String> details = List.of(exception.getField() + ": " + exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.VALIDATION_ERROR, "Validation failed", details);
+        log.warn("Field validation failed: {}", errorResponse.getDetails());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.ALREADY_EXISTS_ERROR, "Request conflicts with existing data", List.of());
+        log.warn("Request conflicts with existing data: {}", exception.getMostSpecificCause().getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }
