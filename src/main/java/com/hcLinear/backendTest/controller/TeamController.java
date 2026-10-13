@@ -29,7 +29,7 @@ public class TeamController {
 
     @GetMapping
     public ResponseEntity<List<TeamResponse>> findAll() {
-        log.info("HTTP GET request received to retrieve all teams");
+        log.info("HTTP GET request received to retrieve all teams.");
         List<TeamResponse> teamResponses = teamService.findAll();
         return new ResponseEntity<>(teamResponses, HttpStatus.OK);
     }
