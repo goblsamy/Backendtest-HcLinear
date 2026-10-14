@@ -11,4 +11,12 @@ public interface TransferRequestRepository extends JpaRepository<TransferRequest
     boolean existsByPlayerIdAndTargetTeamIdAndStatus(Long playerId, Long targetTeamId, TransferRequestStatus status);
 
     List<TransferRequest> findByPlayerIdAndStatus(Long playerId, TransferRequestStatus status);
+
+    List<TransferRequest> findByPlayerId(Long playerId);
+
+    List<TransferRequest> findBySourceTeamId(Long sourceTeamId);
+
+    List<TransferRequest> findByTargetTeamId(Long targetTeamId);
+
+
 }

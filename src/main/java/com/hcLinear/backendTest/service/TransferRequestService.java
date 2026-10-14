@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -151,6 +152,28 @@ public class TransferRequestService {
 
     private TransferRequest findById(Long transferRequestId) {
         return transferRequestRepository.findById(transferRequestId).orElseThrow(() -> new TransferRequestNotFoundException(transferRequestId));
+    }
+
+    public List<TransferRequestResponse> listRequestsByPlayer(Long playerId) {
+        if (!playerRepository.existsById(playerId)) {
+            throw new PlayerNotFoundException(playerId);
+        }
+        List<TransferRequest> transferRequests = transferRequestRepository.findByPlayerId(playerId);
+        return transferRequests.stream().map(mapper::toResponse).toList();
+    }
+
+    public List<TransferRequestResponse> listRequestsBySourceTeam(Long sourceTeamId) {
+        teamService.findTeamWithIdIfExists(sourceTeamId);
+        return transferRequestRepository.findBySourceTeamId(sourceTeamId)
+                .stream()
+                .map(mapper::toResponse).toList();
+    }
+
+    public List<TransferRequestResponse> listRequestsByTargetTeam(Long targetTeamId) {
+        teamService.findTeamWithIdIfExists(targetTeamId);
+        return transferRequestRepository.findByTargetTeamId(targetTeamId)
+                .stream()
+                .map(mapper::toResponse).toList();
     }
 
 }

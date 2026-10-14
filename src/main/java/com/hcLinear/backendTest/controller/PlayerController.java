@@ -2,7 +2,9 @@ package com.hcLinear.backendTest.controller;
 
 import com.hcLinear.backendTest.dto.PlayerCreateRequest;
 import com.hcLinear.backendTest.dto.PlayerResponse;
+import com.hcLinear.backendTest.dto.TransferRequestResponse;
 import com.hcLinear.backendTest.service.PlayerService;
+import com.hcLinear.backendTest.service.TransferRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.List;
 public class PlayerController {
 
     private final PlayerService playerService;
+    private final TransferRequestService transferRequestService;
 
     @PostMapping
     public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody PlayerCreateRequest request) {
@@ -46,7 +49,13 @@ public class PlayerController {
         log.info("HTTP DELETE request received to delete player with ID: {}", id);
         playerService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
+    @GetMapping("/{id}/transfer-requests")
+    public ResponseEntity<List<TransferRequestResponse>> listRequestsByPlayer(@PathVariable Long id) {
+        log.info("HTTP GET request received to retrieve all transfer requests of player with id {}", id);
+        List<TransferRequestResponse> transferRequestResponses = transferRequestService.listRequestsByPlayer(id);
+        return new ResponseEntity<>(transferRequestResponses, HttpStatus.OK);
     }
 
 }

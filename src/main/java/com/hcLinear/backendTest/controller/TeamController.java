@@ -2,7 +2,9 @@ package com.hcLinear.backendTest.controller;
 
 import com.hcLinear.backendTest.dto.TeamCreateRequest;
 import com.hcLinear.backendTest.dto.TeamResponse;
+import com.hcLinear.backendTest.dto.TransferRequestResponse;
 import com.hcLinear.backendTest.service.TeamService;
+import com.hcLinear.backendTest.service.TransferRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.List;
 public class TeamController {
 
     private final TeamService teamService;
+    private final TransferRequestService transferRequestService;
 
     @PostMapping
     public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody TeamCreateRequest request) {
@@ -54,4 +57,20 @@ public class TeamController {
         TeamResponse teamResponse = teamService.appointCaptain(teamId, playerId);
         return new ResponseEntity<>(teamResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/transfer-requests/outgoing")
+    public ResponseEntity<List<TransferRequestResponse>> listOutgoingRequestsByTeam(@PathVariable Long id) {
+        log.info("HTTP GET request received to retrieve all outgoing transfer requests of team with id {}", id);
+        List<TransferRequestResponse> transferRequestResponses = transferRequestService.listRequestsBySourceTeam(id);
+        return new ResponseEntity<>(transferRequestResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/transfer-requests/incoming")
+    public ResponseEntity<List<TransferRequestResponse>> listIncomingRequestsByTeam(@PathVariable Long id) {
+        log.info("HTTP GET request received to retrieve all incoming transfer requests of team with id {}", id);
+        List<TransferRequestResponse> transferRequestResponses = transferRequestService.listRequestsByTargetTeam(id);
+        return new ResponseEntity<>(transferRequestResponses, HttpStatus.OK);
+    }
+
+
 }
