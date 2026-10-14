@@ -5,12 +5,10 @@ import com.hcLinear.backendTest.dto.PlayerResponse;
 import com.hcLinear.backendTest.exceptionhandling.FieldValidationException;
 import com.hcLinear.backendTest.exceptionhandling.PlayerNotFoundException;
 import com.hcLinear.backendTest.exceptionhandling.ShirtNumberAlreadyExistsException;
-import com.hcLinear.backendTest.exceptionhandling.TeamNotFoundException;
 import com.hcLinear.backendTest.mapper.PlayerMapper;
 import com.hcLinear.backendTest.model.Player;
 import com.hcLinear.backendTest.model.Team;
 import com.hcLinear.backendTest.repository.PlayerRepository;
-import com.hcLinear.backendTest.repository.TeamRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ public class PlayerService {
 
     private static final int MIN_PLAYER_AGE = 15;
     private final PlayerRepository playerRepository;
-    private final TeamRepository teamRepository;
     private final PlayerMapper playerMapper;
     private final TeamService teamService;
 
