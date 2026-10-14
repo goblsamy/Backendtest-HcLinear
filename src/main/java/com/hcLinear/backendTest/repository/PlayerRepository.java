@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     boolean existsByShirtNumberAndTeamId(Integer shirtNumber, Long teamId);
+
+    long countByTeamId(Long teamId);
 }
