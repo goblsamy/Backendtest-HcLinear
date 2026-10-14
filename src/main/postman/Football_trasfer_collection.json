@@ -1,0 +1,600 @@
+{
+  "info": {
+    "_postman_id": "04906c84-7f99-4cdf-99ad-03c9f981ad48",
+    "name": "Football_transfer",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31099789"
+  },
+  "item": [
+    {
+      "name": "CreateTeam",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Ferencváros\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1899,\r\n  \"budget\": 50000000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "CreateTeam",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Ferencváros\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1899,\r\n  \"budget\": 50000000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/teams",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:43:41 GMT"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"errorType\": \"ALREADY_EXISTS_ERROR\",\n  \"message\": \"Team with name Ferencváros already exists.\",\n  \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "CreateTeamDuplicateName",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "CreateTeamDuplicateName",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Ferencváros\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1999,\r\n  \"budget\": 50000000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/teams",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:43:53 GMT"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"errorType\": \"ALREADY_EXISTS_ERROR\",\n  \"message\": \"Team with name Ferencváros already exists.\",\n  \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "CreateTeamWithoutName",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1999,\r\n  \"budget\": 50000000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "CreateTeamWithoutName",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1999,\r\n  \"budget\": 50000000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/teams",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:44:35 GMT"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"errorType\": \"VALIDATION_ERROR\",\n  \"message\": \"Validation failed\",\n  \"details\": [\n    \"name: Team name cannot be blank.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "CreateTeamInvalidYear",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 2030,\r\n  \"budget\": 50000000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "CreateTeamInvalidYear",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Vidi\",\r\n  \"city\": \"Székesfehérvár\",\r\n  \"foundedYear\": 2030,\r\n  \"budget\": 50000000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/teams",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:46:34 GMT"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"errorType\": \"VALIDATION_ERROR\",\n  \"message\": \"Validation failed\",\n  \"details\": [\n    \"foundedYear: Founded year must be between 1857 and the current year.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "GetAllTeams",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "GetAllTeams",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/teams",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:48:22 GMT"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Ferencváros\",\n    \"city\": \"Budapest\",\n    \"foundedYear\": 1899,\n    \"budget\": 50000000,\n    \"numberOfPlayers\": 0,\n    \"captainFullName\": null\n  },\n  {\n    \"id\": 2,\n    \"name\": \"MTK\",\n    \"city\": \"Budapest\",\n    \"foundedYear\": 1999,\n    \"budget\": 50000000,\n    \"numberOfPlayers\": 0,\n    \"captainFullName\": null\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "GetTeamById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "GetTeamById",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/teams/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "teams",
+                "1"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "transfer-encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "date",
+              "value": "Tue, 13 Oct 2026 11:49:12 GMT"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"id\": 1,\n  \"name\": \"Ferencváros\",\n  \"city\": \"Budapest\",\n  \"foundedYear\": 1899,\n  \"budget\": 50000000,\n  \"numberOfPlayers\": 0,\n  \"captainFullName\": null\n}"
+        }
+      ]
+    },
+    {
+      "name": "DeleteTeamById",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreatePlayer",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"firstName\": \"Dávid\",\r\n  \"lastName\": \"Gera\",\r\n  \"position\": \"MF\",\r\n  \"shirtNumber\": 10,\r\n  \"birthDate\": \"1995-03-14\",\r\n  \"marketValue\": 1500000,\r\n  \"teamId\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/players",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "players"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAllPlayers",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/players",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "players"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetPlayerById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/players/3",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "players",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeletePlayerById",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/players/3",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "players",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AppointCaptain",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams/5/captain/4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams",
+            "5",
+            "captain",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
