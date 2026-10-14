@@ -47,4 +47,11 @@ public class TeamController {
         teamService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{teamId}/captain/{playerId}")
+    public ResponseEntity<TeamResponse> appointCaptain(@PathVariable Long teamId, @PathVariable Long playerId) {
+        log.info("HTTP PUT request received to assign captain with playerId {} and teamId {}", playerId, teamId);
+        TeamResponse teamResponse = teamService.appointCaptain(teamId, playerId);
+        return new ResponseEntity<>(teamResponse, HttpStatus.OK);
+    }
 }

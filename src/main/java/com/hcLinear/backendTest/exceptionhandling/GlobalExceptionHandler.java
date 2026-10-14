@@ -109,4 +109,11 @@ public class GlobalExceptionHandler {
         log.warn("Request conflicts with existing data: {}", exception.getMostSpecificCause().getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessRuleException(BusinessRuleException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.BUSINESS_RULE_ERROR, exception.getMessage(), List.of());
+        log.warn("Business rule violation: {}", exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

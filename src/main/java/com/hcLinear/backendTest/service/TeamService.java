@@ -2,11 +2,12 @@ package com.hcLinear.backendTest.service;
 
 import com.hcLinear.backendTest.dto.TeamCreateRequest;
 import com.hcLinear.backendTest.dto.TeamResponse;
-import com.hcLinear.backendTest.exceptionhandling.FieldValidationException;
-import com.hcLinear.backendTest.exceptionhandling.TeamAlreadyExistsException;
-import com.hcLinear.backendTest.exceptionhandling.TeamNotFoundException;
+import com.hcLinear.backendTest.exceptionhandling.*;
+import com.hcLinear.backendTest.mapper.PlayerMapper;
 import com.hcLinear.backendTest.mapper.TeamMapper;
+import com.hcLinear.backendTest.model.Player;
 import com.hcLinear.backendTest.model.Team;
+import com.hcLinear.backendTest.repository.PlayerRepository;
 import com.hcLinear.backendTest.repository.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -23,6 +25,7 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
+    private final PlayerRepository playerRepository;
     private static final int MIN_YEAR = 1857;
 
     public TeamResponse findById(Long teamId) {
@@ -66,5 +69,14 @@ public class TeamService {
         teamRepository.delete(team);
     }
 
+    public TeamResponse appointCaptain(Long teamId, Long playerId) {
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
+        if (player.getTeam() == null || !Objects.equals(teamId, player.getTeam().getId())) {
+            throw new PlayerNotTeamMemberException(playerId, teamId);
+        }
+        team.setCaptain(player);
+        return teamMapper.toResponse(team);
+    }
 
 }
