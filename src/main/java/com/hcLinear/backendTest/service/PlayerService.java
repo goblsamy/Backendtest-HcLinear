@@ -25,15 +25,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PlayerService {
 
+    private static final int MIN_PLAYER_AGE = 15;
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
     private final PlayerMapper playerMapper;
-    private static final int MIN_PLAYER_AGE = 15;
+    private final TeamService teamService;
 
 
     public PlayerResponse create(PlayerCreateRequest request) {
         validatePlayerBirthDate(request.getBirthDate());
-        Team team = findTeamWithIdIfExists(request.getTeamId());
+        Team team = teamService.findTeamWithIdIfExists(request.getTeamId());
         validatePlayerShirtNumberIsUnique(request.getShirtNumber(), request.getTeamId());
         String firstName = request.getFirstName().trim();
         String lastName = request.getLastName().trim();
@@ -57,13 +58,6 @@ public class PlayerService {
         if (age < MIN_PLAYER_AGE) {
             throw new FieldValidationException("birthDate", "Age must be older than or equal to " + MIN_PLAYER_AGE);
         }
-    }
-
-    private Team findTeamWithIdIfExists(Long teamId) {
-        if (teamId == null) {
-            return null;
-        }
-        return teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
     }
 
     public PlayerResponse findById(Long playerId) {

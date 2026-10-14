@@ -22,13 +22,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TeamService {
 
+    private static final int MIN_YEAR = 1857;
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
     private final PlayerRepository playerRepository;
-    private static final int MIN_YEAR = 1857;
 
     public TeamResponse findById(Long teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        Team team = findTeamWithIdIfExists(teamId);
         return teamMapper.toResponse(team);
 
     }
@@ -63,19 +63,26 @@ public class TeamService {
     }
 
     public void delete(Long teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        Team team = findTeamWithIdIfExists(teamId);
         team.getPlayers().forEach(player -> player.setTeam(null));
         teamRepository.delete(team);
     }
 
     public TeamResponse appointCaptain(Long teamId, Long playerId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        Team team = findTeamWithIdIfExists(teamId);
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
         if (player.getTeam() == null || !Objects.equals(teamId, player.getTeam().getId())) {
             throw new PlayerNotTeamMemberException(playerId, teamId);
         }
         team.setCaptain(player);
         return teamMapper.toResponse(team);
+    }
+
+    public Team findTeamWithIdIfExists(Long teamId) {
+        if (teamId == null) {
+            return null;
+        }
+        return teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
     }
 
 }
