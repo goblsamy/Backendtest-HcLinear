@@ -7,7 +7,6 @@ import com.hcLinear.backendTest.exceptionhandling.PlayerNotFoundException;
 import com.hcLinear.backendTest.exceptionhandling.ShirtNumberAlreadyExistsException;
 import com.hcLinear.backendTest.exceptionhandling.TeamNotFoundException;
 import com.hcLinear.backendTest.mapper.PlayerMapper;
-import com.hcLinear.backendTest.mapper.TeamMapper;
 import com.hcLinear.backendTest.model.Player;
 import com.hcLinear.backendTest.model.Team;
 import com.hcLinear.backendTest.repository.PlayerRepository;
