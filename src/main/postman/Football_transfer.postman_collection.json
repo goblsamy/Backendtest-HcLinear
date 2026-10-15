@@ -778,6 +778,27 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "GeneratePdf",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-documents/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-documents",
+            "1"
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }

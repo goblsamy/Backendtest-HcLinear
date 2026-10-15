@@ -5,6 +5,7 @@ import com.hcLinear.backendTest.exceptionhandling.TransferDocumentNotFoundExcept
 import com.hcLinear.backendTest.mapper.TransferDocumentMapper;
 import com.hcLinear.backendTest.model.TransferDocument;
 import com.hcLinear.backendTest.model.TransferRequest;
+import com.hcLinear.backendTest.pdf.TransferDocumentPdfGenerator;
 import com.hcLinear.backendTest.repository.TransferDocumentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,6 +25,7 @@ public class TransferDocumentService {
 
     private final TransferDocumentRepository repository;
     private final TransferDocumentMapper mapper;
+    private final TransferDocumentPdfGenerator pdfGenerator;
 
 
     public void createForAcceptedRequest(TransferRequest transferRequest, LocalDateTime transferTime) {
@@ -47,5 +50,10 @@ public class TransferDocumentService {
     public TransferDocumentResponse findById(Long transferDocumentId) {
         TransferDocument transferDocument = repository.findById(transferDocumentId).orElseThrow(() -> new TransferDocumentNotFoundException(transferDocumentId));
         return mapper.toResponse(transferDocument);
+    }
+
+    public byte[] generatePdf(Long id) {
+        TransferDocument document = repository.findById(id).orElseThrow(() -> new TransferDocumentNotFoundException(id));
+        return pdfGenerator.generate(document);
     }
 }

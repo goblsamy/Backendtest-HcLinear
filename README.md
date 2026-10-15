@@ -54,12 +54,12 @@ A `.gitignore` fájl módosításra került, mert a szintaxisa nem működött.
 | POST    | `/api/teams`                                 | Csapat létrehozása                                   | 201   |
 | GET     | `/api/teams`                                 | Összes csapat (játékosszámmal és a kapitány nevével) | 200   |
 | GET     | `/api/teams/{id}`                            | Csapat lekérdezése Id alapján                        | 200   |
-| DELETE  | `/api/teams/{id}`                            | Csapat törlése                                       | 204   |
+| DELETE  | `/api/teams/{id}`                            | Csapat törlése Id alapján                            | 204   |
 | PUT     | `/api/teams/{teamId}/captain/{playerId}`     | CsK kijelölése                                       | 200   |
 | POST    | `/api/players`                               | Játékos létrehozása                                  | 201   |
 | GET     | `/api/players`                               | Összes játékos (teljes névvel és a csapat nevével)   | 200   |
 | GET     | `/api/players/{id}`                          | Játékos lekérdezése Id alapján                       | 200   |
-| DELETE  | `/api/players/{id}`                          | Játékos törlése                                      | 204   |
+| DELETE  | `/api/players/{id}`                          | Játékos törlése Id alapján                           | 204   |
 | POST    | `/api/transfer-requests`                     | Átigazolási kérelem létrehozása                      | 201   |
 | POST    | `/api/transfer-requests/{id}/accept`         | Kérelem elfogadása                                   | 200   |
 | POST    | `/api/transfer-requests/{id}/reject`         | Kérelem elutasítása                                  | 200   |
@@ -68,6 +68,7 @@ A `.gitignore` fájl módosításra került, mert a szintaxisa nem működött.
 | GET     | `/api/teams/{id}/transfer-requests/incoming` | Csapat bejövő kérelmei Id alapján                    | 200   |
 | GET     | `/api/transfer-documents`                    | Összes átigazolási dokumentum                        | 200   |
 | GET     | `/api/transfer-documents/{id}`               | Dokumentum lekérdezése Id alapján                    | 200   |
+| GET     | `/api/transfer-documents/{id}/pdf`           | Átigazolási dokumentum PDF-ben                       | 200   |
 
 A kérésekhez és a válaszokhoz DTO-kat használok, az entitások nem kerülnek ki a service rétegből.
 
@@ -92,7 +93,7 @@ A kérésekhez és a válaszokhoz DTO-kat használok, az entitások nem kerülne
 
 ### Validáció három szinten
 
-- DTO (annotációk): a mezőnkénti, egyszerű szabályok (kötelező mezők, hosszak, tartományok). Gyors, nem igényel adatbázist, és a kliens mezőnként érthető hibaüzenetet kap.
+- DTO (annotációk): a mezőnkénti, egyszerű szabályok (kötelező mezők, hosszak, tartományok). 
 - Service: azok a szabályok, amelyekhez adatbázis-lekérdezés kell (egyedi csapatnév, foglalt mezszám, csapattagság), vagy amelyek az aktuális dátumtól függenek, ezért nem fejezhetők ki fix annotációval (alapítási év, életkor). Ezek külön privát metódusokban vannak.
 - Adatbázis (megszorítások): az utolsó ellenőrzés. Akkor is megvédi az adatokat, ha két egyidejű kérés egyszerre megy át a service ellenőrzésén, vagy ha egy módosítás megkerüli a service réteget. Az ilyenkor keletkező DataIntegrityViolationException-t a hibakezelő 409-es válaszra fordítja.
 
@@ -152,13 +153,23 @@ Mivel minden ellenőrzés a dokumentum létrehozása előtt lefut, ez ritka de i
 A dokumentum idegen kulccsal hivatkozik a kérelemre (egyedi, tehát egy kérelemhez legfeljebb egy dokumentum tartozik), a játékosra és a csapatokra.
 Nem snapshot jellegű, tehát ha a hivatkozott adatok később változnának, a dokumentum az aktuális adatokat mutatná.
 
-A dokumentumokhoz külön service és controller tartozik, a lista és az azonosító alapján történő lekérdezés végpontjaival.
+A dokumentumokhoz külön service és controller tartozik, a lista és az Id alapján történő lekérdezés végpontjaival.
+
+## PDF-export
+
+Az átigazolási dokumentum PDF-ben is lekérhető a `GET /api/transfer-documents/{id}/pdf` végponton. A PDF a kiírás szerinti adatokat tartalmazza: a játékos nevét, a forrás- és a célcsapat nevét és városát (ha nincs forráscsapat, ezt jelzi), az átigazolási összeget és a létrehozás idejét.
+
+A PDF előállításához az OpenPDF könyvtárat használtam. A 2.x verziót választottam, mert a 3.0-ban megváltozott a csomagnév (`com.lowagie` helyett `org.openpdf`), és a legtöbb elérhető példa még a régit használja.
+
+A PDF-et egy külön osztály (TransferDocumentPdfGenerator) készíti a memóriában, fájl mentése nélkül. A service hívja meg, a tranzakción belül, mert a játékos és a csapatok lazy betöltésű kapcsolatok. A magyar ékezetek (például ő, ű) miatt a betűtípust CP1250 kódolással hozom létre.
+
+A válasz application/pdf típusú, és a Content-Disposition fejléc miatt a böngésző vagy a Postman rögtön megjeleníti a fájlt.
 
 ### Egyéb
 
 - Az open-in-view ki van kapcsolva. Az entitások DTO-vá alakítása ezért a @Transactional service-metódusokon belül történik, ahol a lazy betöltésű kapcsolatok elérhetők.
-- A mapperek MapStructtal készültek. A nem triviális mezőket (a játékos teljes neve, a kapitány neve, a játékosok száma) default metódusok számolják.
-- A repositoryk két saját metódusa (existsByName, existsByShirtNumberAndTeamId) a Spring Data Query Method, metódusnévből generált lekérdezéseit használja.
+- A mapperek MapStructtal készültek. A nem triviális mezőket (a játékos teljes neve, a kapitány neve, a játékosok száma, stb...) default metódusok számolják.
+- A repositoryk saját metódusai a Spring Data Query Method lekérdezéseit használják, illetve a korábban említett natív sql-t.
 - A fejlesztés során AI-asszisztenst tanulásra, hibakeresésre és kódnézésre használtam; a kódot én írtam, és a tervezési döntéseket én hoztam.
 
 A Postman collection az src/main/postman könyvtárban található.
