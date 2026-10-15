@@ -12,7 +12,7 @@ Gradle telepítése nem szükséges, mert a projekt a Gradle wrappert használja
 ## Indítás
 
 1. Indítsd el a Docker Desktopot.
-2. A `development` könyvtárban indítsd el az adatbázist:
+2. A development könyvtárban indítsd el az adatbázist:
 
    docker compose up -d
 
@@ -41,11 +41,11 @@ A ./gradlew build csak akkor fut le sikeresen, ha a docker konténer is fut.
 ## Eltérések a kapott projekthez képest
 
 
-A `docker-compose.yml` fájlban a port-kivezetés kikommentezve érkezett, ezért a konténer elindult, de a gépről nem volt elérhető. A kivezetést visszakapcsoltam, az 5433-as gépoldali porttal.
+A docker-compose.yml fájlban a port-kivezetés kikommentezve érkezett, ezért a konténer elindult, de a gépről nem volt elérhető. A kivezetést visszakapcsoltam, az 5433-as gépoldali porttal.
 
 ### .gitignore
 
-A `.gitignore` fájl módosításra került, mert a szintaxisa nem működött.
+A .gitignore fájl módosításra került, mert a szintaxisa nem működött.
 
 ## API-dokumentáció (Postman collection)
 
@@ -76,26 +76,26 @@ A kérésekhez és a válaszokhoz DTO-kat használok, az entitások nem kerülne
 
 ### Adatmodell
 
-- Az azonosítók Long típusúak (az adatbázisban BIGSERIAL).
-- A játékos és a csapat között kétirányú kapcsolat van: a játékos felől `@ManyToOne`, a csapat felől `@OneToMany`. A játékosnak nem kötelező csapattal rendelkeznie.
-- A kapitányt a teams tábla captain_id oszlopa tárolja (egyirányú @OneToOne). Az oszlop egyedi, így egy játékos legfeljebb egy csapat kapitánya lehet.
-- A pozíciót (GK, DF, MF, FW) a PlayerType enum tárolja. Az adatbázisban szövegként mentődik, és egy CHECK megszorítás csak a négy értéket engedi.
-- A pénzösszegek (költségkeret, piaci érték) Javában BigDecimal, az adatbázisban NUMERIC(15, 0) típusúak, egész euróban értendők.
+Az azonosítók Long típusúak (az adatbázisban BIGSERIAL).
+A játékos és a csapat között kétirányú kapcsolat van: a játékos felől `@ManyToOne`, a csapat felől `@OneToMany`. A játékosnak nem kötelező csapattal rendelkeznie.
+A kapitányt a teams tábla captain_id oszlopa tárolja (egyirányú @OneToOne). Az oszlop egyedi, így egy játékos legfeljebb egy csapat kapitánya lehet.
+A pozíciót (GK, DF, MF, FW) a PlayerType enum tárolja. Az adatbázisban szövegként mentődik, és egy CHECK megszorítás csak a négy értéket engedi.
+A pénzösszegek (költségkeret, piaci érték) Javában BigDecimal, az adatbázisban NUMERIC(15, 0) típusúak, egész euróban értendők.
 
 ### Üzleti szabályok
 
-- Csapat törlésekor a csapat játékosai nem törlődnek, csak a csapatuk lesz null. Csapat nélküli játékos is megengedett, és így a játékosokhoz kapcsolódó adatok megmaradnak.
-- Kapitányt csak a csapat tagjai közül lehet kijelölni (ellenkező esetben 422). Ha a kapitányt törlik, a csapat kapitánya automatikusan null lesz.
-- A mezszám opcionális (csapat nélküli játékosnak nincs), 1 és 99 közötti, és csapaton belül egyedi (ütközés esetén 409).
-- Az alapítási év legkisebb elfogadott értéke 1857, ami az első futballklub, Sheffield F.C. alapításának dátuma. A legnagyobb az aktuális év.
-- A játékosnak legalább 15 évesnek kell lennie.
-- A két minimumértéket static final konstansokban tárolom a service osztályokban.
+Csapat törlésekor a csapat játékosai nem törlődnek, csak a csapatuk lesz null. Csapat nélküli játékos is megengedett, és így a játékosokhoz kapcsolódó adatok megmaradnak.
+Kapitányt csak a csapat tagjai közül lehet kijelölni (ellenkező esetben 422). Ha a kapitányt törlik, a csapat kapitánya automatikusan null lesz.
+A mezszám opcionális (csapat nélküli játékosnak nincs), 1 és 99 közötti, és csapaton belül egyedi (ütközés esetén 409).
+Az alapítási év legkisebb elfogadott értéke 1857, ami az első futballklub, Sheffield F.C. alapításának dátuma. A legnagyobb az aktuális év.
+A játékosnak legalább 15 évesnek kell lennie.
+A két minimumértéket static final konstansokban tárolom a service osztályokban.
 
 ### Validáció három szinten
 
-- DTO (annotációk): a mezőnkénti, egyszerű szabályok (kötelező mezők, hosszak, tartományok). 
-- Service: azok a szabályok, amelyekhez adatbázis-lekérdezés kell (egyedi csapatnév, foglalt mezszám, csapattagság), vagy amelyek az aktuális dátumtól függenek, ezért nem fejezhetők ki fix annotációval (alapítási év, életkor). Ezek külön privát metódusokban vannak.
-- Adatbázis (megszorítások): az utolsó ellenőrzés. Akkor is megvédi az adatokat, ha két egyidejű kérés egyszerre megy át a service ellenőrzésén, vagy ha egy módosítás megkerüli a service réteget. Az ilyenkor keletkező DataIntegrityViolationException-t a hibakezelő 409-es válaszra fordítja.
+DTO (annotációk): a mezőnkénti, egyszerű szabályok (kötelező mezők, hosszak, tartományok). 
+Service: azok a szabályok, amelyekhez adatbázis-lekérdezés kell (egyedi csapatnév, foglalt mezszám, csapattagság), vagy amelyek az aktuális dátumtól függenek, ezért nem fejezhetők ki fix annotációval (alapítási év, életkor). Ezek külön privát metódusokban vannak.
+Adatbázis (megszorítások): az utolsó ellenőrzés. Akkor is megvédi az adatokat, ha két egyidejű kérés egyszerre megy át a service ellenőrzésén, vagy ha egy módosítás megkerüli a service réteget. Az ilyenkor keletkező DataIntegrityViolationException-t a hibakezelő 409-es válaszra fordítja.
 
 ### Hibakezelés
 
@@ -164,6 +164,10 @@ A PDF előállításához az OpenPDF könyvtárat használtam. A 2.x verziót v�
 A PDF-et egy külön osztály (TransferDocumentPdfGenerator) készíti a memóriában, fájl mentése nélkül. A service hívja meg, a tranzakción belül, mert a játékos és a csapatok lazy betöltésű kapcsolatok. A magyar ékezetek (például ő, ű) miatt a betűtípust CP1250 kódolással hozom létre.
 
 A válasz application/pdf típusú, és a Content-Disposition fejléc miatt a böngésző vagy a Postman rögtön megjeleníti a fájlt.
+
+### Tesztek
+
+Unit teszteket a TransferRequestService osztályra írtam, melyet AI segítségével generáltam. Ezután ellenőriztem és futtattam őket, 10/10 passed eredménnyel.
 
 ### Egyéb
 
