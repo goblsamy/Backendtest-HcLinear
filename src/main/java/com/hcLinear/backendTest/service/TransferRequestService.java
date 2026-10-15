@@ -30,6 +30,7 @@ public class TransferRequestService {
     private final PlayerRepository playerRepository;
     private final TeamService teamService;
     private final TransferRequestMapper mapper;
+    private final TransferDocumentService transferDocumentService;
 
     public TransferRequestResponse create(TransferCreateRequest request) {
         Player player = playerRepository.findById(request.getPlayerId()).orElseThrow(() -> new PlayerNotFoundException(request.getPlayerId()));
@@ -75,6 +76,7 @@ public class TransferRequestService {
         executeTransfer(transferRequest);
         transferRequest.setDecidedAt(decidedAt);
         transferRequest.setStatus(TransferRequestStatus.ACCEPTED);
+        transferDocumentService.createForAcceptedRequest(transferRequest, decidedAt);
         closeOtherPendingRequests(transferRequest, decidedAt);
         return mapper.toResponse(transferRequest);
     }
