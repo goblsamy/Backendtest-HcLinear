@@ -13,7 +13,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"name\": \"Ferencváros\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 1899,\r\n  \"budget\": 50000000\r\n}",
+          "raw": "{\r\n    \"name\": \"Debrecen\",\r\n    \"city\": \"Debrecen\",\r\n    \"foundedYear\": 1902,\r\n    \"budget\": 1000000\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -258,7 +258,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"name\": \"\",\r\n  \"city\": \"Budapest\",\r\n  \"foundedYear\": 2030,\r\n  \"budget\": 50000000\r\n}",
+          "raw": "{\r\n  \"name\": \"Vidi\",\r\n  \"city\": \"Székesfehérvár\",\r\n  \"foundedYear\": 2030,\r\n  \"budget\": 50000000\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -468,7 +468,7 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/teams",
+          "raw": "http://localhost:8080/api/teams/2",
           "protocol": "http",
           "host": [
             "localhost"
@@ -476,7 +476,8 @@
           "port": "8080",
           "path": [
             "api",
-            "teams"
+            "teams",
+            "2"
           ]
         }
       },
@@ -489,7 +490,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"firstName\": \"Dávid\",\r\n  \"lastName\": \"Gera\",\r\n  \"position\": \"MF\",\r\n  \"shirtNumber\": 10,\r\n  \"birthDate\": \"1995-03-14\",\r\n  \"marketValue\": 1500000,\r\n  \"teamId\": 1\r\n}",
+          "raw": "{\r\n    \"firstName\": \"Péter\",\r\n    \"lastName\": \"Kovács\",\r\n    \"position\": \"FW\",\r\n    \"birthDate\": \"1998-06-01\",\r\n    \"marketValue\": 2000000\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -579,7 +580,7 @@
         "method": "PUT",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/teams/5/captain/4",
+          "raw": "http://localhost:8080/api/teams/1/captain/1",
           "protocol": "http",
           "host": [
             "localhost"
@@ -588,9 +589,191 @@
           "path": [
             "api",
             "teams",
-            "5",
+            "1",
             "captain",
-            "4"
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateTransferRequest",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"playerId\": 2,\r\n    \"targetTeamId\": 2\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-requests",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-requests"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RejectTransferRequest",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-requests/4/reject",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-requests",
+            "4",
+            "reject"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AcceptTransferRequest",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-requests/4/accept",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-requests",
+            "4",
+            "accept"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetOutgoingTeamTransferRequests",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams/1/transfer-requests/outgoing",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams",
+            "1",
+            "transfer-requests",
+            "outgoing"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetIncomingTeamTransferRequests",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/teams/1/transfer-requests/incoming",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "teams",
+            "1",
+            "transfer-requests",
+            "incoming"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetPlayerTransferRequests",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/players/2/transfer-requests",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "players",
+            "2",
+            "transfer-requests"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAllTransferDocuments",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-documents",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-documents"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetTransferDocumentById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transfer-documents/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transfer-documents",
+            "1"
           ]
         }
       },

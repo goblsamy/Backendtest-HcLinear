@@ -49,17 +49,25 @@ A `.gitignore` fájl módosításra került, mert a szintaxisa nem működött.
 
 ## API-dokumentáció (Postman collection)
 
-| Metódus | Útvonal                                  | Leírás                                               | Siker |
-|---------|------------------------------------------|------------------------------------------------------|-------|
-| POST    | `/api/teams`                             | Csapat létrehozása                                   | 201   |
-| GET     | `/api/teams`                             | Összes csapat (játékosszámmal és a kapitány nevével) | 200   |
-| GET     | `/api/teams/{id}`                        | Egy csapat lekérdezése                               | 200   |
-| DELETE  | `/api/teams/{id}`                        | Csapat törlése                                       | 204   |
-| PUT     | `/api/teams/{teamId}/captain/{playerId}` | Kapitány kijelölése                                  | 200   |
-| POST    | `/api/players`                           | Játékos létrehozása                                  | 201   |
-| GET     | `/api/players`                           | Összes játékos (teljes névvel és a csapat nevével)   | 200   |
-| GET     | `/api/players/{id}`                      | Egy játékos lekérdezése                              | 200   |
-| DELETE  | `/api/players/{id}`                      | Játékos törlése                                      | 204   |
+| Metódus | Útvonal                                      | Leírás                                               | Siker |
+|---------|----------------------------------------------|------------------------------------------------------|-------|
+| POST    | `/api/teams`                                 | Csapat létrehozása                                   | 201   |
+| GET     | `/api/teams`                                 | Összes csapat (játékosszámmal és a kapitány nevével) | 200   |
+| GET     | `/api/teams/{id}`                            | Csapat lekérdezése Id alapján                        | 200   |
+| DELETE  | `/api/teams/{id}`                            | Csapat törlése                                       | 204   |
+| PUT     | `/api/teams/{teamId}/captain/{playerId}`     | CsK kijelölése                                       | 200   |
+| POST    | `/api/players`                               | Játékos létrehozása                                  | 201   |
+| GET     | `/api/players`                               | Összes játékos (teljes névvel és a csapat nevével)   | 200   |
+| GET     | `/api/players/{id}`                          | Játékos lekérdezése Id alapján                       | 200   |
+| DELETE  | `/api/players/{id}`                          | Játékos törlése                                      | 204   |
+| POST    | `/api/transfer-requests`                     | Átigazolási kérelem létrehozása                      | 201   |
+| POST    | `/api/transfer-requests/{id}/accept`         | Kérelem elfogadása                                   | 200   |
+| POST    | `/api/transfer-requests/{id}/reject`         | Kérelem elutasítása                                  | 200   |
+| GET     | `/api/players/{id}/transfer-requests`        | Játékos kérelmei Id alapján                          | 200   |
+| GET     | `/api/teams/{id}/transfer-requests/outgoing` | Csapat kimenő kérelmei Id alapján                    | 200   |
+| GET     | `/api/teams/{id}/transfer-requests/incoming` | Csapat bejövő kérelmei Id alapján                    | 200   |
+| GET     | `/api/transfer-documents`                    | Összes átigazolási dokumentum                        | 200   |
+| GET     | `/api/transfer-documents/{id}`               | Dokumentum lekérdezése Id alapján                    | 200   |
 
 A kérésekhez és a válaszokhoz DTO-kat használok, az entitások nem kerülnek ki a service rétegből.
 
@@ -108,10 +116,49 @@ Minden hiba egységes formátumban érkezik:
 
 A saját kivételek közös ősosztályokból származnak (NotFoundException, AlreadyExistsException, BusinessRuleException, FieldValidationException), így a GlobalExceptionHandler ősosztályonként egyetlen metódussal kezeli őket.
 
+## Átigazolási kérelmek
+
+A kérelem összege e-mailes egyeztetés alapján a játékos piaci értéke (marketValue). Ha a játékosnak nincs csapata, az összeg 0.
+
+A kérelem állapotát enumban tárolom: PENDING, ACCEPTED, REJECTED, CLOSED. Az adatbázisban szövegként tárolom őket, egy CHECK megszorítással.
+
+A lejárt állapotot nem tárolom, hanem a lejárati dátumból számolom: egy függő kérelem lejárt, ha a lejárati ideje elmúlt. Ezt a válaszban az expired mező mutatja. 
+Ha a kliens nem ad meg lejáratot, az automatikusan 48 óra. Ha megad, annak jövőbeli dátumnak kell lennie.
+
+Létrehozáskor ellenőrzöm, hogy a játékos és a célcsapat létezik-e, hogy a megadott forráscsapat megegyezik-e a játékos jelenlegi csapatával, és hogy a forrás és a cél nem ugyanaz.
+Egy játékosnak több függő kérelme is lehet, de ugyanattól a célcsapattól csak egy.
+
+Elfogadáskor újra ellenőrzök mindent, ami a létrehozás óta megváltozhatott: függőben van-e még a kérelem, nem járt-e le, a játékos még mindig a forráscsapatban van-e, van-e hely a célcsapatban (legfeljebb 25 játékos)
+és van-e elég pénze a célcsapatnak. Ha bármelyik nem teljesül, 422-es hibát adok.
+
+Sikeres átigazoláskor a célcsapat keretéből levonódik az összeg és a forráscsapathoz kerül, a játékos átkerül a célcsapatba, és a mezszáma felszabadul. 
+Ha a játékos a forráscsapat kapitánya volt, a csapat kapitánya null lesz. A játékos többi függő kérelme automatikusan CLOSED állapotba kerül. 
+Mindez egy tranzakcióban történik, így ha bármelyik lépés elbukik, semmi nem módosul.
+
+Elutasítani csak függő kérelmet lehet. A lejárt kérelmet nem lehet elfogadni, de el lehet utasítani.
+
+A kérelmek listázhatók játékos, forráscsapat (kimenő) és célcsapat (bejövő) szerint.
+
+## Átigazolási dokumentum
+
+Sikeres átigazoláskor automatikusan létrejön egy dokumentum a transfer_documents táblában, ugyanabban a tranzakcióban, mint maga az átigazolás.
+
+A dokumentumnak van egy technikai azonosítója (id) és egy olvasható dokumentumszáma, például TRFR000014HU. Ez az előtagból egy hatjegyű, nullákkal kitöltött sorszámból és az utótagból (HU) áll.
+A sorszámot egy Postgres-szekvencia adja, amit egy natív lekérdezéssel kérek le, a formázás pedig a service-ben történik. Az előtag és az utótag konstansok.
+
+A szekvenciában lehetnek hézagok: ha egy tranzakció a sorszám lekérése után elbukik, az a szám nem kerül vissza. 
+Mivel minden ellenőrzés a dokumentum létrehozása előtt lefut, ez ritka de ismert hiba.
+
+A dokumentum idegen kulccsal hivatkozik a kérelemre (egyedi, tehát egy kérelemhez legfeljebb egy dokumentum tartozik), a játékosra és a csapatokra.
+Nem snapshot jellegű, tehát ha a hivatkozott adatok később változnának, a dokumentum az aktuális adatokat mutatná.
+
+A dokumentumokhoz külön service és controller tartozik, a lista és az azonosító alapján történő lekérdezés végpontjaival.
+
 ### Egyéb
 
 - Az open-in-view ki van kapcsolva. Az entitások DTO-vá alakítása ezért a @Transactional service-metódusokon belül történik, ahol a lazy betöltésű kapcsolatok elérhetők.
 - A mapperek MapStructtal készültek. A nem triviális mezőket (a játékos teljes neve, a kapitány neve, a játékosok száma) default metódusok számolják.
 - A repositoryk két saját metódusa (existsByName, existsByShirtNumberAndTeamId) a Spring Data Query Method, metódusnévből generált lekérdezéseit használja.
+- A fejlesztés során AI-asszisztenst tanulásra, hibakeresésre és kódnézésre használtam; a kódot én írtam, és a tervezési döntéseket én hoztam.
 
-A Postman collection a `resources/postman/` könyvtárban található.
+A Postman collection az src/main/postman könyvtárban található.
